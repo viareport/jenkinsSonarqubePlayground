@@ -1,0 +1,10 @@
+unclassified:
+  sonarGlobalConfiguration:
+      buildWrapperEnabled: true
+      installations:
+      - name: "Local"
+        serverUrl: "http://sonarqube:9000"
+        serverAuthenticationToken: "token"
+        triggers:
+          skipScmCause: false
+          skipUpstreamCause: false

@@ -1,0 +1,49 @@
+version: '3.7'
+services:
+  sonarqube:
+    image: sonarqube:7.9.1-community
+    ports:
+      - "9000:9000"
+    networks:
+      - mynetwork
+    environment: 
+      - sonar.jdbc.url=jdbc:postgresql://db:5432/sonar
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    depends_on:
+      - db
+  
+  db:
+    image: postgres:12
+    networks:
+      - mynetwork
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  jenkins:
+    build: ./jenkins
+    ports:
+      - '8080:8080'
+      - '443:443'
+      - '50000:50000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../sample:/opt/app/sample
+    networks:
+      - mynetwork
+    depends_on:
+      - sonarqube
+
+networks:
+  mynetwork:
+
+volumes:
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:
+  pg_data:
