@@ -15,10 +15,55 @@ Dans ce répertoire, on trouve tout ce qu'il faut pour démarrer un serveur Jenk
 
 *Attention* : Pour le moment le conteneur Jenkins ne peut pas (pour le moment) faire du "Docker in Docker".
 
+## Complément de conf Sonarqube
+
+Rajouter le Webhook suivant (http://localhost:9000/admin/webhooks) : http://jenkins:8080/sonarqube-webhook/	
+Créer un token pour l'utilisateur admin/admin
+
+## Complément de conf Jenkins
+
+Compléter la déclaration du serveur Sonarqube avec le token créé précédent (attention, il faut le créer en tant que "Secret Text" via le 'Jenkins Credentials Provider')
+
+## Création du pipeline de job
+
+Avec le script suivant :
+```
+node {
+   stage 'checkout'
+   checkout filesystem(clearWorkspace: false, copyHidden: false, path: '/opt/app/sample')
+   
+   stage 'Test'
+   sh './gradlew clean test --stacktrace'
+   
+   step([$class: 'JUnitResultArchiver', testResults: 'build/test-results/test/*.xml'])
+   
+   stage 'Coverage'
+   sh './gradlew jacocoTestReport --stacktrace'
+   
+   stage("Sonarqube analysis") {
+       withSonarQubeEnv("Local") {
+       	sh './gradlew sonarqube --stacktrace'
+       	}
+   }
+   
+   stage("Sonarqube Quality Gate"){
+      timeout(time: 2, unit: 'MINUTES') {
+          def qg = waitForQualityGate()
+          if (qg.status != 'OK') {
+              error "Pipeline aborted due to quality gate failure: ${qg.status}"
+          }
+      }
+  }      
+}
+```
+
 # sample
 
 Projet "sample" (Kotlin) pouvant être analysé dans Sonarqube (violation + coverage) via build Jenkins/Gradle.
 
 # Comment déclarer des jobs du projet 'sample' dans Jenkins ?
 
-Le contenu du projet est visible dans le conteneur Jenkins dans le répertoire */opt/app/sample* et il existe une entrée "File System" (merci au plugin qui va bien) au niveau du Source Code Management de Jenkins
+Le contenu du projet est visible dans le conteneur Jenkins dans le répertoire */opt/app/sample* et il existe une entrée "File System" (merci au plugin qui substitue le filesystem à un SCM) au niveau du Source Code Management de Jenkins
+
+
+
