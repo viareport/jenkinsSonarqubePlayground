@@ -42,8 +42,8 @@ node {
    
    stage("Sonarqube analysis") {
        withSonarQubeEnv("Local") {
-       	sh './gradlew sonarqube --stacktrace'
-       	}
+        sh './gradlew sonarqube -Dsonar.projectVersion=Build$BUILD_ID --stacktrace'
+        }
    }
    
    stage("Sonarqube Quality Gate"){
