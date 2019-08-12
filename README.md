@@ -24,13 +24,14 @@ Créer un token pour l'utilisateur admin/admin
 
 Compléter la déclaration du serveur Sonarqube avec le token créé précédent (attention, il faut le créer en tant que "Secret Text" via le 'Jenkins Credentials Provider')
 
-## Création du pipeline de job
+## Création du pipeline de job pour projet Kotlin mono-module (sample)
 
 Avec le script suivant :
+* En mode 'scripted pipeline' :
 ```
 node {
    stage 'checkout'
-   checkout filesystem(clearWorkspace: false, copyHidden: false, path: '/opt/app/sample')
+   checkout filesystem(clearWorkspace: false, copyHidden: false, path: '/opt/app/sampleKt')
    
    stage 'Test'
    sh './gradlew clean test --stacktrace'
@@ -54,6 +55,51 @@ node {
           }
       }
   }      
+}
+```
+
+* En mode 'declarative pipeline' :
+```
+pipeline {
+  agent any
+  stages {
+    stage('checkout') {
+      steps {
+          checkout filesystem(clearWorkspace: false, copyHidden: false, path: '/opt/app/sampleKt')
+        }
+      }
+     
+      stage('Test') {
+        steps {
+          sh './gradlew clean test --stacktrace'
+       
+          junit(allowEmptyResults: true, testResults: '**/build/test-results/test/*.xml')
+        }
+      }
+     
+      stage('Coverage') {
+        steps {
+          sh './gradlew jacocoTestReport --stacktrace'    
+        }
+      }
+     
+     
+      stage('Sonarqube analysis') {
+        steps {
+            withSonarQubeEnv("Local") {
+              sh './gradlew sonarqube -Dsonar.projectVersion=Build$BUILD_ID --stacktrace'
+            }
+         }
+     }
+     
+      stage('Sonarqube Quality Gate'){
+        steps {
+            timeout(time: 2, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+              }
+          }
+      }      
+  }
 }
 ```
 
