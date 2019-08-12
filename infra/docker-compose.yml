@@ -32,7 +32,9 @@ services:
       - '443:443'
       - '50000:50000'
     volumes:
-      - ../sample:/opt/app/sample
+      - ../sample:/opt/app/sampleKt
+      - ../sample-react:/opt/app/sampleReact
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - mynetwork
     depends_on:
