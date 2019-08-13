@@ -1,3 +1,7 @@
 sample/.gradle/
 sample/.idea/
 sample/build/
+
+sample-multi/.gradle/
+sample-multi/.idea/
+sample-multi/**/build/

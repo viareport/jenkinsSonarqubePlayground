@@ -1,0 +1,5 @@
+rootProject.name = 'sample-multi'
+
+include "main1"
+include "main2"
+include "commons"
