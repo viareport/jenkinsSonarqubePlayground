@@ -24,7 +24,11 @@ Créer un token pour l'utilisateur admin/admin
 
 Compléter la déclaration du serveur Sonarqube avec le token créé précédent (attention, il faut le créer en tant que "Secret Text" via le 'Jenkins Credentials Provider')
 
-## Création du pipeline de job pour projet Kotlin mono-module (sample)
+# sample
+
+Projet "sample" (Kotlin mono module buildé par Gradle) pouvant être analysé dans Sonarqube (violation + coverage) via build Jenkins/Gradle.
+
+## Création du pipeline de job
 
 Avec le script suivant :
 * En mode 'scripted pipeline' :
@@ -103,11 +107,68 @@ pipeline {
 }
 ```
 
-# sample
+# sample-react
 
-Projet "sample" (Kotlin) pouvant être analysé dans Sonarqube (violation + coverage) via build Jenkins/Gradle.
+Projet "sample" (JS/React initié par Create React App) pouvant être analysé dans Sonarqube (violation + coverage) via build Jenkins/sonar-scanner.
 
-# Comment déclarer des jobs du projet 'sample' dans Jenkins ?
+## Création du pipeline de job
+
+Avec le script suivant :
+* En mode 'declarative pipeline' :
+```
+pipeline {
+  agent none
+  stages {
+    stage('checkout') {
+        agent any
+      steps {
+          checkout filesystem(clearWorkspace: false, copyHidden: false, path: '/opt/app/sampleReact')
+        }
+      }
+     
+      stage('Inside Docker') {
+          agent { 
+              dockerfile {
+                  args '--tmpfs /.npm --network=infra_mynetwork'        
+              }
+          }
+          stages {
+              stage('Build') {
+                  steps {
+                    script {
+                          sh 'npm install'
+                      }
+                  }
+              }
+              stage('Coverage') {
+                  steps {
+                    script {
+                          sh 'npm run coverage'
+                      }
+                  }
+              }
+              stage('Sonarqube analysis') {
+                    steps {
+                        withSonarQubeEnv("Local") {
+                          sh 'sonar-scanner -Dsonar.projectVersion=Build$BUILD_ID'
+                        }
+                    }
+                }
+                 
+                stage('Sonarqube Quality Gate'){
+                    steps {
+                        timeout(time: 2, unit: 'MINUTES') {
+                            waitForQualityGate abortPipeline: true
+                        }
+                    }
+                }      
+          }
+      }
+  }
+}
+```
+
+# Comment déclarer des jobs sur des projets locaux (hors Git) dans Jenkins ?
 
 Le contenu du projet est visible dans le conteneur Jenkins dans le répertoire */opt/app/sample* et il existe une entrée "File System" (merci au plugin qui substitue le filesystem à un SCM) au niveau du Source Code Management de Jenkins
 
