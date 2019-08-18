@@ -1,4 +1,4 @@
-package demo
+package fr.inativ.main1
 
 fun getGreeting(): String {
     val words = listOf("Hello", "world !")

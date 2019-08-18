@@ -1,0 +1,6 @@
+sonarqube {
+    properties {
+        property "sonar.projectName", "sample-commons"
+        property "sonar.projectKey", "sample:commons"
+    }
+}

@@ -1,3 +1,10 @@
 dependencies {
     implementation project(":commons")
 }
+
+sonarqube {
+    properties {
+        property "sonar.projectName", "sample-main1"
+        property "sonar.projectKey", "sample:main1"
+    }
+}

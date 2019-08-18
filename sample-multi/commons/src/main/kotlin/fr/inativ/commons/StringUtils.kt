@@ -12,7 +12,7 @@ fun maFonctionAMoi(s1: String, s2: String): String {
     println("Analyse et conversion de $s1 et $s2")
     val S1 = s1.enMajuscule()
     val S2 = s2.enMajuscule()
-    println("Passage en majusucule pour obtenir $S1 et $S2")
+    println("Passage en majuscule pour obtenir $S1 et $S2")
 
     val neSertARien = emptyList<Int>()
     (0..10).fold(neSertARien, { acc, i ->

@@ -1,4 +1,4 @@
-package demo
+package fr.inativ.commons
 
 import fr.inativ.commons.*
 import org.junit.Test
