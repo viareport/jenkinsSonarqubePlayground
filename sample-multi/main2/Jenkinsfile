@@ -1,0 +1,36 @@
+pipeline {
+  agent any
+
+  triggers { upstream(upstreamProjects: 'sample-multi-commons-sonar,', threshold: hudson.model.Result.FAILURE) }
+
+  stages {
+      stage('checkout') {
+      steps {
+          checkout filesystem(clearWorkspace: true, copyHidden: false, path: '/opt/app/sampleMulti')
+        }
+      }
+      
+      
+      stage('pull artifact') {
+            steps {
+                copyArtifacts filter: 'build/reports/jacoco/report.xml', fingerprintArtifacts: true, projectName: 'sample-multi-pipeline', selector: lastSuccessful(), target: ''
+            }
+        }
+
+      stage('Sonarqube analysis') {
+        steps {
+            withSonarQubeEnv("Local") {
+              sh './gradlew :main2:sonarqube -Dsonar.projectVersion=Build$BUILD_ID --stacktrace'
+            }
+         }
+     }
+     
+      stage('Sonarqube Quality Gate'){
+        steps {
+            timeout(time: 2, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+              }
+          }
+      } 
+  }  
+}

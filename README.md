@@ -107,6 +107,22 @@ pipeline {
 }
 ```
 
+# sample-multi
+
+Projet "sample-multi" (Kotlin multi module buildé par Gradle avec dissémination des tests unitaires sur l'ensemble des modules) pouvant être analysé dans Sonarqube (violation + coverage) via build Jenkins/Gradle.
+
+## Création des pipelines des jobs
+
+![image](https://user-images.githubusercontent.com/1741846/63347413-552b8f80-c357-11e9-8e84-043055b0c413.png)
+
+4 pipelines sont à créer :
+- `sample-multi-pipeline` basé sur le fichier *Jenkinsfile* à la racine : ce job initialise la chaîne de build complête en déclenchant les tests unitaires et le calcul de la couverture de code globale (= fusion des couvertures de chaque sous-module) + déclenchement des downstream jobs
+- `sample-multi-commons-sonar` basé sur le fichier *commons/Jenkinsfile* : ce job lance l'analyse Sonarqube sur le module `commons` (partagé par les modules principaux) + déclenchement des downstream jobs
+- `sample-multi-main1-sonar` basé sur le fichier *main1/Jenkinsfile* : ce job lance l'analyse Sonarqube sur le module `main1` 
+- `sample-multi-main2-sonar` basé sur le fichier *main2/Jenkinsfile* : ce job lance l'analyse Sonarqube sur le module `main2` 
+
+Le principe est donc de lancer les analyses Sonarqube sous forme de downstreams jobs (1 job par analyse pour pouvoir mette le build en échec si pb sur QualityGate) dans l'ordre inverse des dépendances Gradle. Pour avoir des temps de build, on exploite le rapport de couverture de test du 1er pipeline qui est ensuite transmis (utilisation pugin *copyArtifact*) aux jobs downstreams.
+
 # sample-react
 
 Projet "sample" (JS/React initié par Create React App) pouvant être analysé dans Sonarqube (violation + coverage) via build Jenkins/sonar-scanner.

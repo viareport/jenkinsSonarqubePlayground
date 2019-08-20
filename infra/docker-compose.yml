@@ -34,6 +34,7 @@ services:
     volumes:
       - ../sample:/opt/app/sampleKt
       - ../sample-react:/opt/app/sampleReact
+      - ../sample-multi:/opt/app/sampleMulti
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - mynetwork

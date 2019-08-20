@@ -1,0 +1,31 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('checkout') {
+      steps {
+        checkout filesystem(clearWorkspace: false, copyHidden: false, path: '/opt/app/sampleMulti')
+      }
+    }
+     
+    stage('Test') {
+      steps {
+        sh './gradlew clean test --stacktrace'
+     
+        junit(allowEmptyResults: true, testResults: '**/build/test-results/test/*.xml')
+      }
+    }
+    
+    stage('Coverage') {
+      steps {
+        sh './gradlew jacocoTestReport codeCoverageReport --stacktrace'    
+      }
+    }
+  }
+  
+  post {
+      success {
+        archiveArtifacts 'build/reports/jacoco/report.xml'    
+      }
+  } 
+}

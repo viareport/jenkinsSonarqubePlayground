@@ -115,3 +115,4 @@ script-security:1.62
 blueocean-events:1.18.1
 durable-task:1.30
 credentials-binding:1.20
+copyartifact:1.42.1
