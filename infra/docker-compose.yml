@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   sonarqube:
-    image: sonarqube:7.9.1-community
+    image: sonarqube:lts
     ports:
       - "9000:9000"
     networks:
@@ -36,6 +36,8 @@ services:
       - ../sample-react:/opt/app/sampleReact
       - ../sample-multi:/opt/app/sampleMulti
       - /var/run/docker.sock:/var/run/docker.sock
+    environment: 
+      - PLUGINS_FORCE_UPGRADE=true
     networks:
       - mynetwork
     depends_on:

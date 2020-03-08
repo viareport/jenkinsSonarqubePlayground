@@ -13,7 +13,7 @@ docker-compose up -d
 
 Dans ce répertoire, on trouve tout ce qu'il faut pour démarrer un serveur Jenkins (http://localhost:8080) prêt à l'emploi (plugins inclus, cf fichier [plugin.txt](https://github.com/viareport/jenkinsSonarqubePlayground/blob/master/infra/jenkins/plugins.txt)) branché sur un serveur Sonarqube (http://localhost:9000) lui aussi prết à l'emploi (données persistés dans base PostgreSQL et donc résistantes au redémarrage).
 
-*Attention* : Pour le moment le conteneur Jenkins ne peut pas (pour le moment) faire du "Docker in Docker".
+*Notez bien* : Le conteneur Jenkins peut maintenant faire du "Docker in Docker" :+1
 
 ## Complément de conf Sonarqube
 
@@ -23,6 +23,13 @@ Créer un token pour l'utilisateur admin/admin
 ## Complément de conf Jenkins
 
 Compléter la déclaration du serveur Sonarqube avec le token créé précédent (attention, il faut le créer en tant que "Secret Text" via le 'Jenkins Credentials Provider')
+
+### Liste des plugins (plugins.txt)
+
+Pour obtenir la liste (+ les version) des plugins installés dans Jenkins, utilisez la commande suivante (avec éventuellement une redirection pour conserver ces infos dans un fichier) :
+```
+curl -sSL "http://localhost:8080/pluginManager/api/xml?depth=1&xpath=/*/*/shortName|/*/*/version&wrapper=plugins" | perl -pe 's/.*?<shortName>([\w-]+).*?<version>([^<]+)()(<\/\w+>)+/\1 \2\n/g'|sed 's/ /:/'
+```
 
 # sample
 
