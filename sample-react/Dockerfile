@@ -1,11 +1,11 @@
-FROM timbru31/java-node:8
+FROM timbru31/java-node:11
 
-MAINTAINER mOuLiNeX
+LABEL maintainer="mOuLiNeX"
 
 WORKDIR /usr/local
-RUN wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.0.0.1744-linux.zip &&\
-    unzip sonar-scanner-cli-4.0.0.1744-linux.zip && \
-    rm sonar-scanner-cli-4.0.0.1744-linux.zip
-ENV PATH /usr/local/sonar-scanner-4.0.0.1744-linux/bin:$PATH
+RUN wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.2.0.1873-linux.zip &&\
+    unzip sonar-scanner-cli-4.2.0.1873-linux.zip && \
+    rm sonar-scanner-cli-4.2.0.1873-linux.zip
+ENV PATH /usr/local/sonar-scanner-4.2.0.1873-linux/bin:$PATH
 
 WORKDIR /data
