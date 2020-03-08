@@ -110,3 +110,4 @@ pipeline-stage-view:latest
 mapdb-api:latest
 handy-uri-templates-2-api:latest
 workflow-support:latest
+configuration-as-code:latest
