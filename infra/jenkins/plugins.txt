@@ -73,7 +73,6 @@ blueocean-web:latest
 pipeline-model-definition:latest
 mercurial:latest
 command-launcher:latest
-pipeline-model-declarative-agent:latest
 matrix-project:latest
 token-macro:latest
 structs:latest
@@ -111,3 +110,5 @@ mapdb-api:latest
 handy-uri-templates-2-api:latest
 workflow-support:latest
 configuration-as-code:latest
+github-branch-source:latest
+ghprb:latest

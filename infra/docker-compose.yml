@@ -1,15 +1,17 @@
 version: '3.7'
 services:
   sonarqube:
-    image: sonarqube:lts
+    build: ./sonarqube
     ports:
       - "9000:9000"
     networks:
       - mynetwork
     environment: 
       - sonar.jdbc.url=jdbc:postgresql://db:5432/sonar
+      - sonar.jdbc.username=sonar
+      - sonar.jdbc.password=sonar      
     volumes:
-      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_logs:/opt/sonarqube/logs
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
     depends_on:
@@ -47,7 +49,7 @@ networks:
   mynetwork:
 
 volumes:
-  sonarqube_conf:
+  sonarqube_logs:
   sonarqube_data:
   sonarqube_extensions:
   pg_data:
